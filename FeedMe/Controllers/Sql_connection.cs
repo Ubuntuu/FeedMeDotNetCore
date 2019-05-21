@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FeedMe.Models;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -41,14 +42,15 @@ namespace FeedMe.Controllers
         }
 
 
-        public object ShowDataInGridView(string Query_)
+        public DataTable ReturnDataInDatatable(string Query_)
         {
             SqlDataAdapter dr = new SqlDataAdapter(Query_, ConnectionString);
-            DataSet ds = new DataSet();
-            dr.Fill(ds);
-            object dataum = ds.Tables[0];
-            return dataum;
+            DataTable dt = new DataTable();
+            dr.Fill(dt);          
+            return dt;
         }
+
+
 
         public List<T> ConvertDataTableToGenericList<T>(DataTable dt)
         {
@@ -69,6 +71,23 @@ namespace FeedMe.Controllers
 
                 return objT;
             }).ToList();
+        }
+
+        public IList<Role> GetAllRoleAsList(string Query_)
+        {
+            var wsl = new List<Role>();
+
+            SqlCommand cmd = new SqlCommand(Query_, con);
+            con.Open(); // no need of try/catch or using, as if this fails, no resources are leaked
+            using (var reader = cmd.ExecuteReader(CommandBehavior.CloseConnection)) //close con on reader.Close
+            {
+                while (reader.Read())
+                {
+                   // wsl.Add(CreateFromReader(reader));
+                }
+            }
+
+            return wsl;
         }
     }
 }

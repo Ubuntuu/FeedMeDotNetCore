@@ -1,35 +1,47 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using FeedMe.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 
 namespace FeedMe.Controllers
 {
-
     public class RoleController : Controller
     {
-        
+
+
+
         Sql_connection con = new Sql_connection();
 
         // GET: Role
         public ActionResult Index()
         {
             //return new ContentResult { Content = "Role Page" }
-            var roleList = new List<Role>
+            DataTable dt = con.ReturnDataInDatatable("SELECT * FROM user_roles");
+
+            var roleList = new List<Role>();
+            for(int i = 0; i < dt.Rows.Count; i++)
             {
-                new Role(){role_id = 1, role_name = "Costumer"},
-                new Role(){role_id = 2, role_name = "Staff"},
-            };
+                Role role = new Role();
+                role.role_id = Convert.ToInt32(dt.Rows[i]["role_id"]);
+                role.role_name = dt.Rows[i]["role_name"].ToString();
+
+                roleList.Add(role);
+            }
+            
 
             return View(roleList);
            
         }
+
+
 
         // GET: Role/Details/5
         public ActionResult Details(int id)

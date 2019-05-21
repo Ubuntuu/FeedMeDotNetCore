@@ -9,6 +9,5 @@ namespace FeedMe.Models
     {
         public int role_id { get; set; }
         public string role_name { get; set; }
-        public object Name { get; internal set; }
     }
 }
